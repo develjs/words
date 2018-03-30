@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <textarea v-model="message"></textarea>
+        <button v-on:click="next">Next</button>
+    </div>
+    
+    <div id="list">
+        <table>
+            <tr v-for="word in words">
+                <td>{{word.text}}</td>
+                <td>{{word.count}}</td>
+                <td><button v-on:click="hide(word)">hide</button></td>
+            </tr>
+        </table>
+    </div>
+    
+    <!--script src="app.js"></script-->
+    <script>
+    (function(){
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Привет, Vue!'
+            },
+            methods: {
+                next: function() {
+                    list.words = parseWords(this.message);
+                    console.log("next");
+                }
+            }
+        });
+        
+        var list = new Vue({
+            el: '#list',
+            data: {
+                words:[
+                    
+                ]
+            },
+            methods: {
+                hide: function(data){
+                    console.log('hide', data);
+                }
+            }
+        });
+        
+        function parseWords(text) {
+            //text = text.replace(',','');
+            return [
+                { text: 'are', count: 100 },
+                { text: 'is', count: 110 }
+            ];
+        }
+        
+    })()
+        
+    </script>
+</body>
+</html>
