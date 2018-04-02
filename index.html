@@ -16,7 +16,7 @@
             <tr v-for="word in words">
                 <td>{{word.text}}</td>
                 <td>{{word.count}}</td>
-                <td><button v-on:click="hide(word)">hide</button></td>
+                <td><button v-on:click="hide(word)">hide</button><button v-on:click="alias(word)">set alias</button> </td>
             </tr>
         </table>
     </div>
@@ -47,6 +47,9 @@
             methods: {
                 hide: function(data){
                     console.log('hide', data);
+                },
+                alias: function(data){
+                    console.log('alias', data);
                 }
             }
         });
