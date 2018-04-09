@@ -6,64 +6,38 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-    <div id="app">
-        <textarea v-model="message"></textarea>
+
+    <div id="source">
+        Sources:
+        <textarea v-model="text"></textarea>
         <button v-on:click="next">Next</button>
     </div>
+
     
     <div id="list">
+        Founded words:
         <table>
             <tr v-for="word in words">
-                <td>{{word.text}}</td>
+                <td>{{word.word}}</td>
                 <td>{{word.count}}</td>
-                <td><button v-on:click="hide(word)">hide</button><button v-on:click="alias(word)">set alias</button> </td>
+                <td><button v-on:click="hide(word)">hide</button>
+                    <button v-on:click="alias(word)">set alias</button> </td>
             </tr>
         </table>
     </div>
+
+    <div id="knowns">
+        Known words:
+        <table>
+            <tr v-for="word in words">
+                <td>{{word}}</td>
+                <td><button v-on:click="remove(word)">hide</button></td>
+            </tr>
+        </table>
+
+    </div>
     
-    <!--script src="app.js"></script-->
-    <script>
-    (function(){
-        var app = new Vue({
-            el: '#app',
-            data: {
-                message: 'Привет, Vue!'
-            },
-            methods: {
-                next: function() {
-                    list.words = parseWords(this.message);
-                    console.log("next");
-                }
-            }
-        });
-        
-        var list = new Vue({
-            el: '#list',
-            data: {
-                words:[
-                    
-                ]
-            },
-            methods: {
-                hide: function(data){
-                    console.log('hide', data);
-                },
-                alias: function(data){
-                    console.log('alias', data);
-                }
-            }
-        });
-        
-        function parseWords(text) {
-            //text = text.replace(',','');
-            return [
-                { text: 'are', count: 100 },
-                { text: 'is', count: 110 }
-            ];
-        }
-        
-    })()
-        
-    </script>
+    <script src="ui.js"></script>
+    <script></script>
 </body>
 </html>
