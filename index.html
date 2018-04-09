@@ -18,17 +18,18 @@
         Founded words:
         <table>
             <tr v-for="word in words">
-                <td>{{word.word}}</td>
-                <td>{{word.count}}</td>
-                <td><button v-on:click="hide(word)">hide</button>
-                    <button v-on:click="alias(word)">set alias</button> </td>
+                <td>{{ word }}</td>
+                <td>{{ counts[word] ||1 }}</td>
+                <td><button v-on:click="addKnown(word)">Known</button>
+                    <button v-on:click="addAlias(word)">Alias</button> </td>
             </tr>
         </table>
     </div>
 
     <div id="knowns">
         Known words:
-        <table>
+        <button v-on:click="seen=!seen">show/hide</button> </td>
+        <table v-if="seen">
             <tr v-for="word in words">
                 <td>{{word}}</td>
                 <td><button v-on:click="remove(word)">hide</button></td>

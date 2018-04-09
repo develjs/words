@@ -1,3 +1,9 @@
+/**
+ * @todo
+ * add localStorage
+ * add crosswords
+ * add http
+ */
 (function(){
     var source = new Vue({
         el: '#source',
@@ -11,105 +17,27 @@
                 });
             },
             next: function() {
-                list.words = parseWords(this.text);
-                console.log("next");
-            }
-        }
-    });
-    
-    var list = new Vue({
-        el: '#list',
-        data: {
-            words: [
-                // {word:'', count}
-            ],
-            aliases: [
-
-            ]
-        },
-        methods: {
-            hide: function(data){
-                console.log('hide', data);
-            },
-            alias: function(data){
-                console.log('alias', data);
-            }
-        }
-    });
-
-    var knowns = new Vue({
-        el: '#knowns',
-        data: {
-            words: [
+                this.text.split(/[\n\r\s]+/).forEach(function(value) {
+                    value = trim(removeSymbols(value, ' ')).toLowerCase();
+                    list.addWord(value);
+                });
+                list.doSort();
                 
-            ]
-        },
-        methods:{
-            init: function(){
-                get('knowns.list', data => {
-                    this.words = data.split(/[\n\r]+/);
-                    console.log('loaded knowns: ', this.words.length );
-                })
+                console.log("next");
+            },
+            iterate: function(cb_word){
+                this.text.split(/[\n\r\s]+/).forEach(function(value) {
+                    value = trim(removeSymbols(value, ' ')).toLowerCase();
+                    cb_word(value);
+                });
             }
         }
-
-    })
-
-
-    source.init();
-    knowns.init();
-
-    
-    function parseWords(text) {
-
-        var text = source.text;
-        var words = [];
-        var counts = [];
-            
-        // append words
-        text.split(/[\n\r\s]+/).forEach(function(value) {
-            value = trim(removeSymbols(value, ' ')).toLowerCase();
-
-            //if (knowns.words.indexOf(value)>=0) return; // skip knowns
-
-            // append
-            var ind = words.indexOf(value);
-            if (ind<0) {
-                words.push(value);
-                counts.push(1);
-            }
-            else {
-                counts[ind] += 1;
-            }
-        });
-        text = '';
-
-        
-        // convert to composit
-        var composit = [];
-        for (var i=0; i<words.length; i++) {
-            composit.push({word: words[i], count: counts[i]});
-        }
-        words = 0;
-        counts = 0;
-
-        // sort
-        composit.sort(function(a,b) {
-            return b.count - a.count;
-        });
-        
-        console.log(composit);
-
-        return composit;
-    }
-
-
-
-    var symbs = '0123456789!"#$%&\()*+,./:;<=>?[\]^_{|}~“';
-    var symb2 = ['&nbsp;'];
-
+    });
 
     function removeSymbols(text, joinS) {
+        var symbs = '0123456789!"#$%&\()*+,./:;<=>?[\]^_{|}~“”…';
+        var symb2 = ['&nbsp;',"’s"];
+
         for (var i=0; i<symb2.length; i++)
             text = text.split(symb2[i]).join(joinS||'');
 
@@ -125,15 +53,83 @@
     function trim(s) {
         return s.replace(/^\s+/g,'').replace(/\s+$/g,'');
     }
+
+    
+    var list = new Vue({
+        el: '#list',
+        data: {
+            words: [
+                // [word1, word2]
+            ],
+            counts: {
+                // word: count
+            },
+            cross: [
+
+            ]
+        },
+        methods: {
+            addKnown: function(word) {
+                console.log('hide', word);
+            },
+            addAlias: function(data) {
+                console.log('alias', data);
+            },
+            addWord: function(word) {
+                if (knowns.words.indexOf[word]>=0)
+                    return;
+                if (this.words.indexOf(word)>=0) {
+                    this.counts[word] = (this.counts[word]||1) + 1;
+                    return;
+                }
+                this.words.push(word);
+            },
+            doSort: function() {
+                console.log('slice')
+                var words = this.words.slice();
+                console.log('sort')
+                words.sort((a,b) => {
+                    return (this.counts[b]||1) - (this.counts[a]||1);
+                });
+                console.log('apply')
+                this.words = words;
+            }
+        }
+    });
+
+    var knowns = new Vue({
+        el: '#knowns',
+        data: {
+            words: [
+                
+            ],
+            seen: false
+        },
+        methods:{
+            init: function(){
+                get('knowns.list', data => {
+                    this.words = data.split(/[\n\r]+/);
+                    console.log('loaded knowns: ', this.words.length );
+                })
+            }
+        }
+
+    });
+
+
+    source.init();
+    knowns.init();
+    
+
+
     
 
     function get(url, cb_data) {
         var req = new XMLHttpRequest();
         if (cb_data) 
             req.onreadystatechange = function(){
-                if ((req.readyState == 4) && (req.status == 200)) {
-                    cb_data(req.responseText);
-                }
+                if (req.readyState == 4)
+                    cb_data(req.status == 200? req.responseText: '');
             }
         req.open('GET', url); 
         req.send(null);
