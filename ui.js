@@ -1,6 +1,5 @@
 /**
  * @todo
- * add localStorage
  * add crosswords
  * add http
  */
