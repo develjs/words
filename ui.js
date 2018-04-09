@@ -12,7 +12,7 @@
         },
         methods: {
             init: function() {
-                get('bigband.txt', data => {
+                get('luka.txt', data => { // 'bigband.txt'
                     this.text = data;
                 });
             },
@@ -36,7 +36,7 @@
 
     function removeSymbols(text, joinS) {
         var symbs = '0123456789!"#$%&\()*+,./:;<=>?[\]^_{|}~“”…';
-        var symb2 = ['&nbsp;',"’s"];
+        var symb2 = ['&nbsp;',/’s$/,/’ll$/,/’re$/,/n’t$/,/’ve#$/,/’ll$/,/[\u2000-\u20FF]/];
 
         for (var i=0; i<symb2.length; i++)
             text = text.split(symb2[i]).join(joinS||'');
@@ -70,14 +70,18 @@
         },
         methods: {
             addKnown: function(word) {
+                knowns.addWord(word);
+                this.words.splice(this.words.indexOf(word) ,1);
                 console.log('hide', word);
             },
             addAlias: function(data) {
                 console.log('alias', data);
             },
             addWord: function(word) {
-                if (knowns.words.indexOf[word]>=0)
-                    return;
+                if (!word) return;
+
+                if (knowns.words.indexOf(word)>=0) return;
+                    
                 if (this.words.indexOf(word)>=0) {
                     this.counts[word] = (this.counts[word]||1) + 1;
                     return;
@@ -85,43 +89,82 @@
                 this.words.push(word);
             },
             doSort: function() {
-                console.log('slice')
                 var words = this.words.slice();
-                console.log('sort')
                 words.sort((a,b) => {
                     return (this.counts[b]||1) - (this.counts[a]||1);
                 });
-                console.log('apply')
                 this.words = words;
             }
         }
     });
 
+
+    // default knowns - knowns.list
+    // added > add-knowns
+    // removed > removed-knowns
     var knowns = new Vue({
         el: '#knowns',
         data: {
-            words: [
-                
-            ],
-            seen: false
+            seen: false,
+            original: [],
+            words: []
         },
-        methods:{
-            init: function(){
+        methods: {
+            init: function() {
                 get('knowns.list', data => {
                     this.words = data.split(/[\n\r]+/);
+                    this.original = this.words.slice();
+                    this.localLoad();
                     console.log('loaded knowns: ', this.words.length );
-                })
+                });
+            },
+            addWord: function(word) {
+                var w = this.words.indexOf(word);
+                if (w<0) this.words.push(word);
+                this.localSave();
+            },
+            delWord: function(word) {
+                var w = this.words.indexOf(word);
+                if (w>=0) this.words.splice(w, 1);
+                this.localSave();
+            },
+            localSave: function() {
+                var toAdd = [];
+                var toDel = [];
+                this.words.forEach(word=>{
+                    if (this.original.indexOf(word)<0)
+                        toAdd.push(word);
+                });
+
+                this.original.forEach(word=>{
+                    if (this.words.indexOf(word)<0)
+                        toDel.push(word);
+                });
+
+                localStorage.setItem('add-knowns',  toAdd.join(';'));
+                localStorage.setItem('del-knowns',  toDel.join(';'));
+            },
+            localLoad: function() {
+                (localStorage.getItem('add-knowns')||'').split(';').forEach(word=>{
+                    if (this.words.indexOf(word)<0) {
+                        this.words.push(word);
+                        console.log('loaded', word);
+                    }
+                });
+                (localStorage.getItem('del-knowns')||'').split(';').forEach(word=>{
+                    var index = this.words.indexOf(word);
+                    if (index>=0) this.words.splice(index,1);
+                    
+                });
             }
         }
-
     });
 
 
     source.init();
     knowns.init();
+
     
-
-
     
 
     function get(url, cb_data) {
