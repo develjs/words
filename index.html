@@ -1,44 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <title></title>
+<html>
+  <head>
     <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-</head>
-<body>
-
-    <div id="source">
-        Sources:
-        <textarea v-model="text"></textarea>
-        <button v-on:click="next">Next</button>
-    </div>
-
-    
-    <div id="list">
-        Founded words:
-        <table>
-            <tr v-for="word in words">
-                <td>{{ word }}</td>
-                <td>{{ counts[word] ||1 }}</td>
-                <td><button v-on:click="addKnown(word)">Known</button>
-                    <!--button v-on:click="addAlias(word)">Alias</button--> </td>
-            </tr>
-        </table>
-    </div>
-
-    <div id="knowns">
-        Known words:
-        <button v-on:click="seen=!seen">show/hide</button> </td>
-        <table v-if="seen">
-            <tr v-for="word in words">
-                <td>{{word}}</td>
-                <td><button v-on:click="remove(word)">hide</button></td>
-            </tr>
-        </table>
-
-    </div>
-    
-    <script src="ui.js"></script>
-    <script></script>
-</body>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>words</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
 </html>
