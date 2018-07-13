@@ -29,7 +29,7 @@ export default {
                 this.words = data.split(/[\n\r]+/);
                 this.original = this.words.slice();
                 this.localLoad();
-                console.log('loaded knowns: ', this.words.length );
+                //console.log('loaded knowns: ', this.words.length );
             });
         },
         addWord: function(word) {
@@ -62,7 +62,7 @@ export default {
             (localStorage.getItem('add-knowns')||'').split(';').forEach(word=>{
                 if (this.words.indexOf(word)<0) {
                     this.words.push(word);
-                    console.log('loaded', word);
+                    //console.log('loaded', word);
                 }
             });
             (localStorage.getItem('del-knowns')||'').split(';').forEach(word=>{

@@ -1,12 +1,14 @@
 <template>
     <div>
         <h1>Sources:</h1>
-        <textarea v-model="text"></textarea>
-        <button v-on:click="next">Parse</button>
+        <a v-on:click="next" href="javascript:void(0)" class="waves-effect waves-light btn">Parse</a><br/>
+        <textarea class="materialize-textarea" style="width:90%;" v-model="text" ref="text"></textarea>
+        <!--button v-on:click="next">Parse</button-->
     </div>
 </template>
 
 <script>
+
 export default {
     name: 'Source',
     data () {
@@ -20,6 +22,9 @@ export default {
         init: function() {
             get('static/luka.txt', data => { // 'bigband.txt'
                 this.text = data;
+                setTimeout(()=>{
+                    M.textareaAutoResize(this.$refs.text)
+                },1)
             });
         },
 
