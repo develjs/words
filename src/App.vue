@@ -3,52 +3,70 @@
         <div id="tabs" class="row">
             <div class="col s12">
             <ul class="tabs">
-                <li class="tab col s3"><a class="active" href="#source">Source</a></li>
-                <li class="tab col s3"><a href="#words">Words</a></li>
-                <li class="tab col s3"><a href="#test4">Test 4</a></li>
+                <li class="tab col s3"><a v-on:click="showTab='source'" v-bind:class="{active:showTab=='source'}" href="#source">Source</a></li>
+                <li class="tab col s3"><a v-on:click="showTab='words'"  v-bind:class="{active:showTab=='words'}"  href="#words">Words</a></li>
+                <li class="tab col s3"><a v-on:click="showTab='knowns'" v-bind:class="{active:showTab=='knowns'}" href="#knowns">Knowns</a></li>
             </ul>
             </div>
-            <div id="source" class="col s12">
-                <Source ref="text" v-on:next="next"/>
+            <div v-if="showTab=='source'" class="col s12">
+                <Source ref="source" v-on:next="activeTab('words')"/>
             </div>
-            <div id="words" class="col s12">
+            <div v-if="showTab=='words'" class="col s12">
                 <WordsList ref="words"/>
             </div>
-            <div id="test4" class="col s12">Test 4</div>
+            <div v-if="showTab=='knowns'" class="col s12">
+                <Knowns/>
+            </div>
+
         </div>
     </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld'
+/*
+// todo:
+- hightlight selected word
+- hightlight 1000 popular words
+- hightlight 2500? popular words
+- join words with popular suffix: -s, -ed -ly -ment -able -ing...
+- "don t" == "don't"
+- attach google translate
+*/
+
 import Source from './components/Source.vue'
 import WordsList from './components/WordsList.vue'
+import Knowns from './components/Knowns.vue'
 
 export default {
     name: 'App',
     components: {
         Source,
-        WordsList
+        WordsList,
+        Knowns
+    },
+    data () {
+        return {
+            showTab: 'source'
+        }
     },
     methods: {
-        next: function(){
-            var Words = this.$refs.words;
-            var Text = this.$refs.text;
-
-            Text.iterate(function(value) {
-                Words.addWord(value);
-            });
-            Words.doSort();
-
-            console.log("app.next");
+        // handing active tab
+        activeTab: function(name) {
+            this.showTab = name;
+            M.Tabs.getInstance(document.querySelector('.tabs')).select(name);
         }
     },
     mounted() {
         M.AutoInit();
+    },
+    created(){
+        fetch('static/knowns.list').then(res=>res.text())
+        .then(data => {
+            this.$store.commit('initKnowns', data.split(/[\n\r]+/));
+        });
+        
     }
 }
-
-
 
 </script>
 
