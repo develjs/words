@@ -1,13 +1,13 @@
 <template>
     <div>
-        <table>
+        <table class="highlight"><tbody>
             <tr v-for="word in knowns">
                 <td>{{word}}</td>
                 <td>
                     <button v-on:click="remove(word)" class="waves-effect waves-light btn">revert</button>
                 </td>
             </tr>
-        </table>
+        </tbody></table>
     </div>
 </template>
 

@@ -1,3 +1,11 @@
+/*
+// todo:
+- hightlight 1000 popular words
+- hightlight 2500? popular words
+- pack saved words by suffix
+- "don t" == "don't"
+- attach google translate
+*/
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -5,11 +13,47 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state: {
+        words: [], // [word1, word2] - founded words
+        counts: {}, // word: count
         original: [],
-        knowns: [],
-        words: [], // [word1, word2]
-        counts: {} // word: count
+        knowns: []
     },
+
+    getters: {
+        // [{word:'word', count:1}]
+        wordsEx: state => {
+            return state.words.map(word => {
+                return { word, count: state.counts[word]||1 }
+            })
+        },
+
+        // [{word:'word', count:1}]
+        wordsJoinedEx: state => {
+            let joined = [];
+            let sorted = [...state.words].sort();
+            sorted.forEach(word => {
+                let base = suffixless(word);
+                if (base != word) {
+                    let last = joined[joined.length-1];
+                    if (base && last.startsWith(base)) {
+                        if (suffixing(word).concat(base).indexOf(last)>=0) {
+                            joined[joined.length-1] += ',' + word;
+                            return;
+                        };
+                    }
+                }
+
+                joined.push(word);
+            });
+
+            return joined.map(word => {
+                let count = 0;
+                word.split(',').forEach(word => count += state.counts[word]||1);
+                return { word, count: count||1 }
+            })
+        }
+    },
+
     mutations: {
         addWord: function(state, word) {
             if (!word) return;
@@ -24,7 +68,7 @@ export const store = new Vuex.Store({
 
         parseText: function(state, text) {
             text.split(/[\n\r\s]+/).forEach(value => {
-                value = trim(removeSymbols(value, ' ')).toLowerCase();
+                value = removeSymbols(value, ' ').trim().toLowerCase();
                 this.commit('addWord', value);
             });
             this.commit('doSort');
@@ -37,12 +81,14 @@ export const store = new Vuex.Store({
         },
 
         addKnown(state, word) {
-            var w = state.knowns.indexOf(word);
-            if (w<0) state.knowns.push(word);
-            this.commit('localSave');
-
-            state.words.splice(state.words.indexOf(word) ,1);
-            console.log('hide', word);
+            word.split(',').forEach(word => {
+                var w = state.knowns.indexOf(word);
+                if (w<0) state.knowns.push(word);
+                this.commit('localSave');
+    
+                state.words.splice(state.words.indexOf(word), 1);
+                console.log('hide', word);
+            })
         },
 
         delKnown(state, word) {
@@ -112,6 +158,17 @@ function removeSymbols (text, joinS) {
     return text;
 }
 
-function trim (s) {
-    return s.replace(/^\s+/g, '').replace(/\s+$/g, '')
+const SUFFIXES = ['es', 's', 'ed', 'd', 'ly', 'ing'];//'ment', 'able', 'ible',
+function suffixing(word) {
+    return SUFFIXES.map(suff => {
+        word + suff
+    })
+}
+
+function suffixless(word) {
+    for (let s=0; s<SUFFIXES.length; s++) {
+        if (!word.endsWith(SUFFIXES[s])) continue;
+        return word.substr(0, word.length - SUFFIXES[s].length);
+    }
+    return word;
 }

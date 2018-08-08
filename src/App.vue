@@ -23,16 +23,6 @@
 </template>
 
 <script>
-/*
-// todo:
-- hightlight selected word
-- hightlight 1000 popular words
-- hightlight 2500? popular words
-- join words with popular suffix: -s, -ed -ly -ment -able -ing...
-- "don t" == "don't"
-- attach google translate
-*/
-
 import Source from './components/Source.vue'
 import WordsList from './components/WordsList.vue'
 import Knowns from './components/Knowns.vue'
