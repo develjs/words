@@ -5,6 +5,12 @@
 - pack saved words by suffix
 - "don t" == "don't"
 - attach google translate
+- adopt to phone O
+- percent of word
+- -ed only for words with more then 3-letters
+- connect words phrases
+- show context
+- minute+minutes
 */
 import Vue from 'vue';
 import Vuex from 'vuex';
