@@ -3,7 +3,7 @@
         <p>
             Paste your one text below or select one of presets:
             <span v-for="preset in presets">
-                <a href="javascript:void(0)" v-on:click="loadPreset(preset)" class="">{{preset.split('/').pop().replace('.txt','')}}</a>&nbsp;
+                <a href="javascript:void(0)" v-on:click="loadPreset(preset)" class="">{{preset.split('/').pop().replace(/\..*$/,'')}}</a>&nbsp;
             </span>
         </p>
         <a v-on:click="next" href="javascript:void(0)" class="waves-effect waves-light btn">Parse =></a><br/>
@@ -12,13 +12,14 @@
 </template>
 
 <script>
-
+let presets = require('../../static/texts.json');
+console.log(presets)
 export default {
     name: 'Source',
     data () {
         this.init()
         return {
-            presets:['static/luka.txt', 'static/bigband.txt'],
+            presets: presets,
             text: ''
         }
     },
