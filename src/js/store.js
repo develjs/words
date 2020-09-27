@@ -16,14 +16,18 @@
 */
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {WordsHandler, wordsEx, wordsJoinedEx, addWord, removeWord, parseText, doSort} from '../../lib/words';
+import {WordsHandler, wordsEx, wordsJoinedEx} from '../../lib/words';
 
 Vue.use(Vuex);
 
+const  WORDS = [], // [word1, word2] - founded words
+        COUNTS = {}, // word: count
+        wordsHandler = new WordsHandler(WORDS, COUNTS);
+        
 export const store = new Vuex.Store({
     state: {
-        words: [], // [word1, word2] - founded words
-        counts: {}, // word: count
+        words: WORDS, // [word1, word2] - founded words
+        counts: COUNTS, // word: count
         original: [],
         knowns: []
     },
@@ -46,18 +50,17 @@ export const store = new Vuex.Store({
             if (!word) return;
             if (state.knowns.indexOf(word)>=0) return;
             
-            addWord(word, state.words, state.counts);
+            wordsHandler.add(word);
         },
 
         parseText: function(state, text) {
-            parseText(text, value => {
-                this.commit('addWord', value);
-            })
+            wordsHandler.parse(text, state.knowns);
+
             this.commit('doSort');
         },
 
         doSort: function(state) {
-            doSort(state.words, state.counts);
+            wordsHandler.sort();
         },
 
         addKnown(state, word) {
@@ -66,7 +69,7 @@ export const store = new Vuex.Store({
                 if (w<0) state.knowns.push(word);
                 this.commit('localSave');
     
-                removeWord(word, state.words);
+                wordsHandler.remove(word);
                 console.log('hide', word);
             })
         },
