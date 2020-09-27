@@ -9,7 +9,9 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "check-big": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/bigband.txt --save bigband.json"
+    "check-big": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/bigband.txt --save bigband.json",
+    "check-sop": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/my-sophomore-year.txt --save my-sophomore-year.json",
+    "check-anne": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/ann-from-green-gables.txt --save ann-from-green-gables.json"
   },
   "dependencies": {
     "vue": "^2.5.2"
