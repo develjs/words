@@ -16,7 +16,7 @@
 */
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {WordsHandler, wordsEx, wordsJoinedEx, removeSymbols, addWord, removeWord, parseText, doSort} from '../../lib/words';
+import {WordsHandler, wordsEx, wordsJoinedEx, addWord, removeWord, parseText, doSort} from '../../lib/words';
 
 Vue.use(Vuex);
 
