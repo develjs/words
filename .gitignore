@@ -68,3 +68,4 @@ typings/
 *.ntvs*
 *.njsproj
 *.sln
+*.workspace
