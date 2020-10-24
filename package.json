@@ -9,11 +9,15 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
+    "check-times": "node lib/analize-text.js --url https://www.thetimesinplainenglish.com/a-tribal-lobster-war-in-canada",
+    "check-vinni": "node lib/analize-text.js --url http://lib.ru/MILN/pooh.txt_with-big-pictures.html",
     "check-big": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/bigband.txt --save static/bigband.json",
     "check-sop": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/my-sophomore-year.txt --save static/my-sophomore-year.json",
     "check-anne": "node lib/analize-text.js --url https://raw.githubusercontent.com/develjs/words/master/static/ann-from-green-gables.txt --save static/ann-from-green-gables.json"
   },
   "dependencies": {
+    "md5.js": "^1.3.5",
+    "node-html-parser": "^1.3.1",
     "vue": "^2.5.2"
   },
   "devDependencies": {
