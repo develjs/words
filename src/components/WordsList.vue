@@ -15,6 +15,17 @@
                 Sort by count
             </label>
         </span>
+        <span class="input-field">
+            <select v-model="selectedOption" ref="select">
+                <option value="">Show all levels</option>
+                <option value="A1">Hide until A1</option>
+                <option value="A2">Hide until A2</option>
+                <option value="B1">Hide until B1</option>
+                <option value="B2">Hide until B2</option>
+                <option value="C1">Hide until C1</option>
+            </select>
+            <label>Difficulty Level</label>
+        </span>
         <table class="highlight"><tbody>
             <tr v-for="word in words">
                 <td>{{ word.word }}</td>
@@ -35,7 +46,8 @@ export default {
     data () {
         return { 
             suffix: true,
-            sortCount: true
+            sortCount: true,
+            selectedOption: ''
         }
     },
     computed: {
@@ -48,6 +60,22 @@ export default {
 
             if (this.sortCount)
                 words.sort((a,b) => b.count - a.count)
+
+            if (this.selectedOption) {
+                const allLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+                    
+                const index = allLevels.indexOf(this.selectedOption);
+                const validLevels = allLevels.slice(0, index + 1);
+
+                words = words.filter(word => {
+                    const level = this.level(word.word);
+                    if (level === '') return true; // If no level, include it
+
+                    const found = validLevels
+                        .find(l => level.startsWith(l));
+                    return !found; // If found, exclude it
+                });
+            }
 
             return words;
         },
@@ -87,10 +115,30 @@ export default {
                 return 'C2 (' + (index + 1) + ')';
             }
         }
+    },
+    mounted() {
+        // Initialize Materialize Select
+        const elems = this.$refs.select;
+        if (elems) {
+            M.FormSelect.init(elems, {});
+        }
     }
 }
 </script>
 
 <style scoped>
+.input-field {
+    display: inline-block;
+    margin-left: 1rem;
+    
+    .select-wrapper input.select-dropdown {
+        font-size: .9rem;
+        color: #9e9e9e;
+    }
 
+    .dropdown-content li>a, .dropdown-content li>span {
+        font-size: .9rem;
+        padding: .9rem 1rem;
+    }
+}
 </style>

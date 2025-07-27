@@ -134,7 +134,6 @@ export const store = new Vuex.Store({
         parseText: async function(context, text) {
             if (context.state.list10000.length === 0) {
                 context.state.list10000 = await getList10000();
-                console.log(context.state.list10000);
             }
 
             this.commit('parseText', text);
