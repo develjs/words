@@ -23,11 +23,25 @@ Vue.use(Vuex);
 const  WORDS = [], // [word1, word2] - founded words
         COUNTS = {}, // word: count
         wordsHandler = new WordsHandler(WORDS, COUNTS);
+
+// load 10000.txt
+const getList10000 = async () => {
+    const res = await fetch('static/10000.txt');
+    if (res.ok) {
+        const text = await res.text();
+        const list = text.split(/\r?\n/).filter(word => word.trim() !== '');
+        return list;
+    } else {
+        console.warn('Failed to load 10000.txt');
+        return [];
+    }
+}
         
 export const store = new Vuex.Store({
     state: {
         words: WORDS, // [word1, word2] - founded words
         counts: COUNTS, // word: count
+        list10000: [], // list of 10000 most popular words
         original: [],
         knowns: []
     },
@@ -51,12 +65,6 @@ export const store = new Vuex.Store({
             if (state.knowns.indexOf(word)>=0) return;
             
             wordsHandler.add(word);
-        },
-
-        parseText: function(state, text) {
-            wordsHandler.parse(text, state.knowns);
-
-            this.commit('doSort');
         },
 
         doSort: function(state) {
@@ -115,10 +123,22 @@ export const store = new Vuex.Store({
             state.original = state.knowns.slice();
             this.commit('localLoad');
             //console.log('loaded knowns: ', this.words.length );
+        },
+        parseText: function(state, text) {
+            wordsHandler.parse(text, state.knowns);
+            this.commit('doSort');
         }
     },
 
     actions: {
+        parseText: async function(context, text) {
+            if (context.state.list10000.length === 0) {
+                context.state.list10000 = await getList10000();
+                console.log(context.state.list10000);
+            }
 
+            this.commit('parseText', text);
+        }
     }
 });
+

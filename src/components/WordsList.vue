@@ -19,6 +19,7 @@
             <tr v-for="word in words">
                 <td>{{ word.word }}</td>
                 <td>{{ word.count }}</td>
+                <td>{{ level(word.word) }}</td>
                 <td><button v-on:click="addKnown(word.word)" class="waves-effect waves-light btn">Known</button>
                     <!--button v-on:click="addAlias(word.word)">Alias</button--> </td>
             </tr>
@@ -57,6 +58,34 @@ export default {
     methods: {
         addKnown: function(word) {
             this.$store.commit('addKnown', word);
+        },
+        level: function(word) {
+            const words = word.split(',').map(w => w.trim());
+
+            const list10000 = this.$store.state.list10000 || [];
+            if (list10000.length === 0) {
+                return '';
+            }
+
+            const index = Math.min(
+                ...words.map(w => list10000.indexOf(w)).filter(i => i !== -1)
+            );
+
+            if (index === Infinity || index === -1) {
+                return '';
+            } else if (index < 1000) {
+                return 'A1 (' + (index + 1) + ')';
+            } else if (index < 2500) {
+                return 'A2 (' + (index + 1) + ')';
+            } else if (index < 3500) {
+                return 'B1 (' + (index + 1) + ')';
+            } else if (index < 5000) {
+                return 'B2 (' + (index + 1) + ')';
+            } else if (index < 7500) {
+                return 'C1 (' + (index + 1) + ')';
+            } else {
+                return 'C2 (' + (index + 1) + ')';
+            }
         }
     }
 }

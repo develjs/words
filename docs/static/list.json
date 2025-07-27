@@ -1,0 +1,24 @@
+{
+	"www.thetimesinplainenglish.com-b7f336e97b128ce1efee98acc33a7a8c": {
+		"url": "https://www.thetimesinplainenglish.com/a-tribal-lobster-war-in-canada",
+		"fileSize": 2470,
+		"hash": "b7f336e97b128ce1efee98acc33a7a8c",
+		"wordsCount": 416,
+		"vocabulary": 192,
+		"index-85": 129,
+		"absIndex-85": 4871,
+		"index-90": 150,
+		"absIndex-90": null
+	},
+	"lib.ru-b55ae2b62ffec877277b5a0913f2d12b": {
+		"url": "http://lib.ru/MILN/pooh.txt_with-big-pictures.html",
+		"fileSize": 154265,
+		"hash": "b55ae2b62ffec877277b5a0913f2d12b",
+		"wordsCount": 22756,
+		"vocabulary": 1550,
+		"index-85": 306,
+		"absIndex-85": 4871,
+		"index-90": 446,
+		"absIndex-90": null
+	}
+}

@@ -28,8 +28,9 @@ export default {
         init() {
             
         },
-        next() {
-            this.$store.commit('parseText', this.text);
+        async next() {
+            await this.$store.dispatch('parseText', this.text);
+            
             this.$emit('next');
         },
         loadPreset(preset) {
