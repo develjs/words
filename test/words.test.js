@@ -1,6 +1,6 @@
-const test = require('node:test');
-const assert = require('node:assert');
-const { WordsHandler, wordsJoinedEx } = require('../lib/words');
+import test from 'node:test';
+import assert from 'node:assert';
+import { WordsHandler, wordsJoinedEx } from '../lib/words.js';
 
 test('parse counts repeated words and ignores punctuation/case', () => {
     const h = new WordsHandler();
