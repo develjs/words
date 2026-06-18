@@ -33,6 +33,9 @@ bower_components
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
+# Production build output (published to GitHub Pages via Actions)
+docs/
+
 # Dependency directories
 node_modules/
 jspm_packages/
@@ -42,7 +45,6 @@ typings/
 
 # Optional npm cache directory
 .npm
-/package-lock.json
 
 # Optional eslint cache
 .eslintcache

@@ -54,4 +54,4 @@ Single source of truth for the SPA. Holds `words`/`counts` (backed by the shared
 ## Conventions
 - ESLint config (`.eslintrc.js`) extends `eslint:recommended` + `plugin:vue/essential` (parser `vue-eslint-parser`); linting is a standalone `npm run lint`, not part of the build.
 - `@` is a Vite alias for `src/` (see `vite.config.js`).
-- The build deliberately targets `docs/` so the app is served from GitHub Pages; `base` is relative (`./`) for production.
+- The build targets `docs/` (gitignored, not committed); `base` is relative (`./`) for production. On push to `master`, `.github/workflows/deploy.yml` runs `npm run build` and publishes `docs/` to GitHub Pages via the official Pages Actions — the repo's Pages source must be set to "GitHub Actions".
