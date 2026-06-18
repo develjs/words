@@ -8,6 +8,7 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
+    "test": "node --test",
     "build": "node build/build.js",
     "check-times": "node lib/analize-text.js --url https://www.thetimesinplainenglish.com/a-tribal-lobster-war-in-canada",
     "check-vinni": "node lib/analize-text.js --url http://lib.ru/MILN/pooh.txt_with-big-pictures.html",

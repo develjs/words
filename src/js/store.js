@@ -75,11 +75,10 @@ export const store = new Vuex.Store({
             word.split(',').forEach(word => {
                 var w = state.knowns.indexOf(word);
                 if (w<0) state.knowns.push(word);
-                this.commit('localSave');
-    
+
                 wordsHandler.remove(word);
-                console.log('hide', word);
             })
+            this.commit('localSave');
         },
 
         delKnown(state, word) {
@@ -124,6 +123,10 @@ export const store = new Vuex.Store({
             this.commit('localLoad');
             //console.log('loaded knowns: ', this.words.length );
         },
+        setList10000(state, list) {
+            state.list10000 = list;
+        },
+
         parseText: function(state, text) {
             wordsHandler.parse(text, state.knowns);
             this.commit('doSort');
@@ -133,10 +136,10 @@ export const store = new Vuex.Store({
     actions: {
         parseText: async function(context, text) {
             if (context.state.list10000.length === 0) {
-                context.state.list10000 = await getList10000();
+                context.commit('setList10000', await getList10000());
             }
 
-            this.commit('parseText', text);
+            context.commit('parseText', text);
         }
     }
 });
