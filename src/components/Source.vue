@@ -12,22 +12,22 @@
 </template>
 
 <script>
-let presets = require('../../static/texts.json');
-console.log(presets)
 export default {
     name: 'Source',
     data () {
-        this.init()
         return {
-            presets: presets,
+            presets: [],
             text: ''
         }
     },
 
+    created() {
+        fetch('static/texts.json')
+            .then(res => res.json())
+            .then(presets => { this.presets = presets });
+    },
+
     methods: {
-        init() {
-            
-        },
         async next() {
             await this.$store.dispatch('parseText', this.text);
             
