@@ -17,6 +17,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {WordsHandler, wordsEx, wordsJoinedEx} from '../../lib/words';
+import levels from '../data/levels.json'; // CEFR rank boundaries { a1, a2, b1, b2, c1 }
 
 Vue.use(Vuex);
 
@@ -36,12 +37,13 @@ const getList10000 = async () => {
         return [];
     }
 }
-        
+
 export const store = new Vuex.Store({
     state: {
         words: WORDS, // [word1, word2] - founded words
         counts: COUNTS, // word: count
         list10000: [], // list of 10000 most popular words
+        levels, // CEFR rank boundaries { a1, a2, b1, b2, c1 }, bundled at build time
         original: [],
         knowns: []
     },

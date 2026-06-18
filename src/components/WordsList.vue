@@ -101,19 +101,19 @@ export default {
 
             if (index === Infinity || index === -1) {
                 return '';
-            } else if (index < 1000) {
-                return 'A1 (' + (index + 1) + ')';
-            } else if (index < 2500) {
-                return 'A2 (' + (index + 1) + ')';
-            } else if (index < 3500) {
-                return 'B1 (' + (index + 1) + ')';
-            } else if (index < 5000) {
-                return 'B2 (' + (index + 1) + ')';
-            } else if (index < 7500) {
-                return 'C1 (' + (index + 1) + ')';
-            } else {
-                return 'C2 (' + (index + 1) + ')';
             }
+
+            // CEFR rank boundaries from levels.json (Oxford 3000/5000 merge),
+            // bundled into the store at build time. Anything past c1 is C2.
+            const { a1, a2, b1, b2, c1 } = this.$store.state.levels;
+
+            const pos = ' (' + (index + 1) + ')';
+            if (index < a1) return 'A1' + pos;
+            else if (index < a2) return 'A2' + pos;
+            else if (index < b1) return 'B1' + pos;
+            else if (index < b2) return 'B2' + pos;
+            else if (index < c1) return 'C1' + pos;
+            else return 'C2' + pos;
         }
     },
     mounted() {

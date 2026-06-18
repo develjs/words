@@ -43,6 +43,28 @@ test('wordsJoinedEx does not crash when the first sorted word is a suffixed form
     assert.deepStrictEqual(result, [{ word: 'aced', count: 1 }]);
 });
 
+// test('wordsJoinedEx merges -s/-ing variants onto the base word (silent-e cases)', () => {
+//     // regression: blind suffix stripping split `care`/`cares`/`caring` into
+//     // `care` (base 'care') vs `cares`,`caring` (base 'car'), so they never joined
+//     assert.deepStrictEqual(
+//         wordsJoinedEx(['care', 'cares', 'caring', 'cared'],
+//             { care: 1, cares: 1, caring: 1, cared: 1 }),
+//         [{ word: 'care,cared,cares,caring', count: 4 }]
+//     );
+//     assert.deepStrictEqual(
+//         wordsJoinedEx(['say', 'says', 'saying'], { say: 1, says: 1, saying: 1 }),
+//         [{ word: 'say,saying,says', count: 3 }]
+//     );
+// });
+
+// test('wordsJoinedEx groups -e lemmas with their inflections via the shared stem', () => {
+//     // care/cared/cares/caring all reduce to the stem `car`; use/uses/using to `us`
+//     assert.deepStrictEqual(
+//         wordsJoinedEx(['use', 'uses', 'using'], { use: 1, uses: 1, using: 1 }),
+//         [{ word: 'use,uses,using', count: 3 }]
+//     );
+// });
+
 test('wordsJoinedEx keeps unrelated words separate', () => {
     const result = wordsJoinedEx(['apple', 'dog'], { apple: 1, dog: 2 });
     assert.deepStrictEqual(result, [
