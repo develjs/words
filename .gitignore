@@ -49,6 +49,9 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+# analyze-url CLI output cache
+.cache/
+
 # Optional REPL history
 .node_repl_history
 
