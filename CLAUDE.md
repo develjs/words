@@ -34,7 +34,19 @@ This is a vocabulary-analysis tool, **Browser SPA** application with additional 
 `WordsHandler` is the heart of the app and is used by both front-ends. It tokenizes text (`TERMINATORS` regex), normalizes/filters words (`WRONG_WORDS`, `WRONG_CHARS`), counts occurrences, and optionally merges suffix variants (`SUFFIXES = es, s, ed, ly, ing`) into a single base form when `options.noSuffix` is set. `getIndex(threshold, etalon)` computes the "vocabulary index" — how many of the most-frequent words cover a given fraction (e.g. 85%) of the text, optionally measured against an external reference word list.
 
 ### The 10000-word frequency list drives CEFR levels
-`public/static/10000.txt` is the reference list of the 10,000 most common English words, ordered by frequency. A word's CEFR level (A1–C2) is derived purely from its **rank/index in this list** (see `level()` in `src/components/WordsList.vue` and the `etalon` "absolute index" in the CLI). When changing level thresholds, update both this list reference and the boundary constants. Data files live in `public/static/` (Vite's `public/` dir): they are served at `/static/…` in dev and copied to `docs/static/` by the build — so source data edits go in `public/static/`, never the generated `docs/`.
+`public/static/10000.txt` is the reference list of the 10,000 most common English words, ordered by frequency. A word's CEFR level (A1–C2) is derived purely from its **rank/index in this list** (see `level()` in `src/components/WordsList.vue` and the `etalon` "absolute index" in the CLI).
+
+The boundary constants live in `src/data/levels.json` (`{ a1, a2, b1, b2, c1 }`, bundled into the Vuex store at build time). These are **0-based index cut-offs into `10000.txt`**: `level()` classifies a word by its `list10000.indexOf(word)` — `index < a1` → A1, `< a2` → A2, … `< c1` → C1, otherwise C2. So `levels.json` and `10000.txt` are tightly coupled: **any insert/delete in `10000.txt` shifts every rank after it and invalidates the boundaries.** Don't hand-edit one without the other — use `lib/manage-words.js` (the `manage-words` skill), which edits the list and re-syncs the boundaries in one step so every surviving word keeps its level:
+
+```bash
+node lib/manage-words.js remove <word> [word2 ...]
+node lib/manage-words.js add <word> [word2 ...] (--after <w> | --before <w> | --rank <n> | --end)
+node lib/manage-words.js where <word> [word2 ...]   # read-only rank+level query
+```
+
+It keeps each boundary pointed at the word that begins the next level (with a fallback if that word is removed). Paths resolve from the repo root, so it runs under PowerShell or Bash.
+
+Data files live in `public/static/` (Vite's `public/` dir): they are served at `/static/…` in dev and copied to `docs/static/` by the build — so source data edits go in `public/static/`, never the generated `docs/`.
 
 ### Vuex store (`src/js/store.js`)
 Single source of truth for the SPA. Holds `words`/`counts` (backed by the shared `WordsHandler` instance), `list10000`, and `knowns`. Key flow:
@@ -52,6 +64,7 @@ Single source of truth for the SPA. Holds `words`/`counts` (backed by the shared
 - Per-document output goes to `--save` (or `.cache/<host>-<hash>.json`); summary metrics are also merged into the aggregate `public/static/list.json` stats DB.
 
 ## Conventions
+- **Scratch files go in `.cache/`.** Any throwaway/one-off script, temp data dump, or working file you create while doing a task belongs in `.cache/` (gitignored) — not in `scripts/`, `lib/`, or the repo root. Only commit a script under `lib/` when it's a deliberate, reusable tool (e.g. `lib/manage-words.js`). This keeps one-off helpers out of version control.
 - ESLint config (`.eslintrc.js`) extends `eslint:recommended` + `plugin:vue/essential` (parser `vue-eslint-parser`); linting is a standalone `npm run lint`, not part of the build.
 - `@` is a Vite alias for `src/` (see `vite.config.js`).
 - The build targets `docs/` (gitignored, not committed); `base` is relative (`./`) for production. On push to `master`, `.github/workflows/deploy.yml` runs `npm run build` and publishes `docs/` to GitHub Pages via the official Pages Actions — the repo's Pages source must be set to "GitHub Actions".
