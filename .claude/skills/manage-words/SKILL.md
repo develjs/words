@@ -1,6 +1,7 @@
 ---
 name: manage-words
 description: Add or remove words in the CEFR frequency list public/static/10000.txt and keep the level boundaries in src/data/levels.json in sync automatically. Use when the user wants to insert, delete, reorder, or re-rank words in the 10000-word reference list, fix a word's CEFR level, or move proper nouns/junk out of the frequency list — anything that edits 10000.txt where the levels must follow.
+allowed-tools: Bash(node lib/manage-words.js:*) PowerShell(node lib/manage-words.js:*) Read(/public/static/10000.txt) Read(/src/data/levels.json)
 ---
 
 # manage-words

@@ -1,6 +1,7 @@
 ---
 name: analyze-url
 description: Analyze the vocabulary of a text/book at a URL using the project's Node CLI (lib/analize-text.js). Fetches the URL, computes word frequency and CEFR vocabulary index, and saves per-document JSON into .cache/ under a human-readable filename derived from the book/text title. Use when the user gives a URL (plain text or HTML article/book) and wants its vocabulary analyzed, difficulty/index measured, or a JSON report generated.
+allowed-tools: Bash(node lib/analize-text.js:*) WebFetch Read(/.cache/**)
 ---
 
 # analyze-url

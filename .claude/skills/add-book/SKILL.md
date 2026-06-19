@@ -1,6 +1,7 @@
 ---
 name: add-book
 description: Add a new preset book/text to the app from a URL or a local file. Downloads (or copies) the text, saves it as public/static/<slug>.txt with a slug filename derived from the book title (mask [\w-]+), and registers it in public/static/texts.json so it shows up as a preset in the Source tab. Use when the user wants to add a book/text/preset from a URL or file path.
+allowed-tools: Bash(node lib/save-text.js:*) Read(/public/static/**) Write(/public/static/**) Edit(/public/static/texts.json) Glob
 ---
 
 # add-book
