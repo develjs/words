@@ -103,8 +103,8 @@ export default {
                 return '';
             }
 
-            // CEFR rank boundaries from levels.json (Oxford 3000/5000 merge),
-            // bundled into the store at build time. Anything past c1 is C2.
+            // CEFR rank boundaries from static/levels.json (Oxford 3000/5000 merge),
+            // fetched into the store at runtime. Anything past c1 is C2.
             const { a1, a2, b1, b2, c1 } = this.$store.state.levels;
 
             const pos = ' (' + (index + 1) + ')';

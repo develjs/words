@@ -17,7 +17,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {WordsHandler, wordsEx, groupWordsByBase} from '../../lib/words';
-import levels from '../data/levels.json'; // CEFR rank boundaries { a1, a2, b1, b2, c1 }
 
 Vue.use(Vuex);
 
@@ -38,12 +37,24 @@ const getList10000 = async () => {
     }
 }
 
+// CEFR rank boundaries { a1, a2, b1, b2, c1 } — 0-based index cut-offs into 10000.txt
+const DEFAULT_LEVELS = { a1: 972, a2: 1765, b1: 2457, b2: 4653, c1: 7103 };
+const getLevels = async () => {
+    const res = await fetch('static/levels.json');
+    if (res.ok) {
+        return await res.json();
+    } else {
+        console.warn('Failed to load levels.json');
+        return DEFAULT_LEVELS;
+    }
+}
+
 export const store = new Vuex.Store({
     state: {
         words: WORDS, // [word1, word2] - founded words
         counts: COUNTS, // word: count
         list10000: [], // list of 10000 most popular words
-        levels, // CEFR rank boundaries { a1, a2, b1, b2, c1 }, bundled at build time
+        levels: DEFAULT_LEVELS, // CEFR rank boundaries { a1, a2, b1, b2, c1 }, fetched from static/levels.json
         original: [],
         knowns: []
     },
@@ -128,6 +139,9 @@ export const store = new Vuex.Store({
         setList10000(state, list) {
             state.list10000 = list;
         },
+        setLevels(state, levels) {
+            state.levels = levels;
+        },
 
         parseText: function(state, text) {
             wordsHandler.parse(text, state.knowns);
@@ -138,7 +152,9 @@ export const store = new Vuex.Store({
     actions: {
         parseText: async function(context, text) {
             if (context.state.list10000.length === 0) {
-                context.commit('setList10000', await getList10000());
+                const [list, levels] = await Promise.all([getList10000(), getLevels()]);
+                context.commit('setList10000', list);
+                context.commit('setLevels', levels);
             }
 
             context.commit('parseText', text);

@@ -1,12 +1,12 @@
 ---
 name: manage-words
-description: Add or remove words in the CEFR frequency list public/static/10000.txt and keep the level boundaries in src/data/levels.json in sync automatically. Use when the user wants to insert, delete, reorder, or re-rank words in the 10000-word reference list, fix a word's CEFR level, or move proper nouns/junk out of the frequency list — anything that edits 10000.txt where the levels must follow.
-allowed-tools: Bash(node lib/manage-words.js:*) PowerShell(node lib/manage-words.js:*) Read(/public/static/10000.txt) Read(/src/data/levels.json)
+description: Add or remove words in the CEFR frequency list public/static/10000.txt and keep the level boundaries in public/static/levels.json in sync automatically. Use when the user wants to insert, delete, reorder, or re-rank words in the 10000-word reference list, fix a word's CEFR level, or move proper nouns/junk out of the frequency list — anything that edits 10000.txt where the levels must follow.
+allowed-tools: Bash(node lib/manage-words.js:*) PowerShell(node lib/manage-words.js:*) Read(/public/static/10000.txt) Read(/public/static/levels.json)
 ---
 
 # manage-words
 
-Edit the frequency list `public/static/10000.txt` and update the CEFR boundaries in `src/data/levels.json` in one step, via `lib/manage-words.js`. **Never hand-edit `10000.txt` line-by-line** — every insert/delete shifts the rank of all later words and silently breaks the level boundaries.
+Edit the frequency list `public/static/10000.txt` and update the CEFR boundaries in `public/static/levels.json` in one step, via `lib/manage-words.js`. **Never hand-edit `10000.txt` line-by-line** — every insert/delete shifts the rank of all later words and silently breaks the level boundaries.
 
 ## Why a script (the coupling)
 
@@ -45,7 +45,7 @@ The frequency list is **ordered by frequency** (rank 1 = most common). A word's 
 1. **Inspect first.** Run `where <word>` on the affected words (and a neighbor or two) to see current ranks/levels and confirm the words exist / don't already exist.
 2. **Apply** the `add` or `remove` command. Words are lowercased automatically; multiple words in one call are fine.
 3. **Read the report.** Confirm the right count changed, nothing landed under "NOT FOUND" or "skipped (already present)" unexpectedly, and the new boundaries look sane (still non-decreasing).
-4. **Report to the user:** which words changed, the line-count delta, and the old→new boundary values. Both files are git-tracked changes — `public/static/10000.txt` and `src/data/levels.json`.
+4. **Report to the user:** which words changed, the line-count delta, and the old→new boundary values. Both files are git-tracked changes — `public/static/10000.txt` and `public/static/levels.json`.
 
 ## Notes & gotchas
 
