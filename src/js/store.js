@@ -16,7 +16,7 @@
 */
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {WordsHandler, wordsEx, wordsJoinedEx} from '../../lib/words';
+import {WordsHandler, wordsEx, groupWordsByBase} from '../../lib/words';
 import levels from '../data/levels.json'; // CEFR rank boundaries { a1, a2, b1, b2, c1 }
 
 Vue.use(Vuex);
@@ -56,7 +56,7 @@ export const store = new Vuex.Store({
 
         // [{word:'word', count:1}]
         wordsJoinedEx: state => {
-            return wordsJoinedEx(state.words, state.counts);
+            return groupWordsByBase(state.words, state.counts);
         }
     },
 
