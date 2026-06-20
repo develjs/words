@@ -66,6 +66,10 @@ Single source of truth for the SPA. Holds `words`/`counts` (backed by the shared
 - Per-document output goes to `--save` (or `.cache/<host>-<hash>.json`); summary metrics are also merged into the aggregate `public/static/list.json` stats DB.
 
 ## Conventions
+- **Language**: All code comments, documentation files (including `CLAUDE.md`, `README.md`, `SKILL.md`, and any other `.md` files), and commit messages must be written in English.
+
+- **Persistent rules (Agent Rules)**: When the user asks you to *always* do something, always remember/understand something, or follow a specific behavior going forward (phrases like "always...", "from now on...", "remember that...", "make sure you always..."), proactively add the instruction to this file (CLAUDE.md). This document serves as the persistent agent rules for the project.
+
 - **Scratch files go in `.cache/`.** Any throwaway/one-off script, temp data dump, or working file you create while doing a task belongs in `.cache/` (gitignored) — not in `scripts/`, `lib/`, or the repo root. Only commit a script under `lib/` when it's a deliberate, reusable tool (e.g. `lib/manage-words.js`). This keeps one-off helpers out of version control.
 - ESLint config (`.eslintrc.js`) extends `eslint:recommended` + `plugin:vue/essential` (parser `vue-eslint-parser`); linting is a standalone `npm run lint`, not part of the build.
 - `@` is a Vite alias for `src/` (see `vite.config.js`).
