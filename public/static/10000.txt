@@ -2,7 +2,6 @@ the
 of
 and
 to
-a
 in
 for
 is
@@ -14,7 +13,6 @@ with
 i
 you
 it
-not
 or
 be
 are
@@ -24,9 +22,9 @@ as
 your
 all
 have
+has
 new
 more
-an
 we
 will
 home
@@ -42,6 +40,7 @@ our
 one
 other
 do
+does
 no
 information
 time
@@ -74,6 +73,7 @@ been
 would
 how
 were
+was
 me
 some
 like
@@ -97,6 +97,7 @@ health
 world
 next
 go
+goes
 work
 last
 most

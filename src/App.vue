@@ -52,7 +52,11 @@ export default {
     created(){
         fetch('static/knowns.list').then(res=>res.text())
         .then(data => {
-            this.$store.commit('initKnowns', data.split(/[\n\r]+/));
+            // each line is a known word; '#' starts a comment (whole-line or trailing)
+            const list = data.split(/[\n\r]+/)
+                .map(line => line.replace(/#.*$/, '').trim())
+                .filter(Boolean);
+            this.$store.commit('initKnowns', list);
         });
         
     }
