@@ -1,0 +1,3 @@
+[skills]
+# Project skills live in the top-level `skills/` folder (non-standard location)
+paths = ["skills"]

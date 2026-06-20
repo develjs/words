@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding assistants (Claude Code and Grok) when working with code in this repository.
 
 ## Commands
 
@@ -36,7 +36,9 @@ This is a vocabulary-analysis tool, **Browser SPA** application with additional 
 ### The 10000-word frequency list drives CEFR levels
 `public/static/10000.txt` is the reference list of the 10,000 most common English words, ordered by frequency. A word's CEFR level (A1–C2) is derived purely from its **rank/index in this list** (see `level()` in `src/components/WordsList.vue` and the `etalon` "absolute index" in the CLI).
 
-The boundary constants live in `public/static/levels.json` (`{ a1, a2, b1, b2, c1 }`, fetched at runtime into the Vuex store alongside `10000.txt`; `store.js` keeps a `DEFAULT_LEVELS` fallback). These are **0-based index cut-offs into `10000.txt`**: `level()` classifies a word by its `list10000.indexOf(word)` — `index < a1` → A1, `< a2` → A2, … `< c1` → C1, otherwise C2. So `levels.json` and `10000.txt` are tightly coupled: **any insert/delete in `10000.txt` shifts every rank after it and invalidates the boundaries.** Don't hand-edit one without the other — use `lib/manage-words.js` (the `manage-words` skill), which edits the list and re-syncs the boundaries in one step so every surviving word keeps its level:
+The boundary constants live in `public/static/levels.json` (`{ a1, a2, b1, b2, c1 }`, fetched at runtime into the Vuex store alongside `10000.txt`; `store.js` keeps a `DEFAULT_LEVELS` fallback). These are **0-based index cut-offs into `10000.txt`**: `level()` classifies a word by its `list10000.indexOf(word)` — `index < a1` → A1, `< a2` → A2, … `< c1` → C1, otherwise C2. So `levels.json` and `10000.txt` are tightly coupled: **any insert/delete in `10000.txt` shifts every rank after it and invalidates the boundaries.** Never hand-edit these files. Always use the `manage-words` skill (or `/manage-words` in Grok). It edits the list and automatically keeps the level boundaries in sync.
+
+The skill supports these commands (run from the project root):
 
 ```bash
 node lib/manage-words.js remove <word> [word2 ...]
@@ -68,3 +70,10 @@ Single source of truth for the SPA. Holds `words`/`counts` (backed by the shared
 - ESLint config (`.eslintrc.js`) extends `eslint:recommended` + `plugin:vue/essential` (parser `vue-eslint-parser`); linting is a standalone `npm run lint`, not part of the build.
 - `@` is a Vite alias for `src/` (see `vite.config.js`).
 - The build targets `docs/` (gitignored, not committed); `base` is relative (`./`) for production. On push to `master`, `.github/workflows/deploy.yml` runs `npm run build` and publishes `docs/` to GitHub Pages via the official Pages Actions — the repo's Pages source must be set to "GitHub Actions".
+
+- **Use skills for repeatable tasks.** For common workflows (editing the frequency list, adding presets, analyzing texts by URL), prefer the dedicated skills in the `skills/` folder over manual steps.
+
+## Skills
+
+Reusable procedures are defined as **skills**. They are stored in the `skills/` directory at the project root (not under `.grok/skills/`).
+
