@@ -68,6 +68,72 @@ export const store = new Vuex.Store({
         // [{word:'word', count:1}]
         wordsJoinedEx: state => {
             return groupWordsByBase(state.words, state.counts);
+        },
+
+        // Get level index for a word (handles comma-separated variants)
+        getLevelIndex: state => word => {
+            const words = word.split(',').map(w => w.trim());
+            const list10000 = state.list10000 || [];
+            if (list10000.length === 0) {
+                return -1;
+            }
+
+            const index = Math.min(
+                ...words.map(w => list10000.indexOf(w)).filter(i => i !== -1)
+            );
+
+            return (index === Infinity || index === -1) ? -1 : index;
+        },
+
+        // Filter and sort words by suffix, count, and level
+        // Returns [{word, count, levelIndex}, ...]
+        getFilteredWords: state => (suffix, sortCount, selectedLevel) => {
+            let words;
+            if (suffix)
+                words = [...groupWordsByBase(state.words, state.counts)];
+            else
+                words = [...wordsEx(state.words, state.counts)];
+
+            if (sortCount)
+                words.sort((a, b) => b.count - a.count);
+
+            // Add levelIndex to each word
+            const list10000 = state.list10000 || [];
+            const { a1, a2, b1, b2, c1 } = state.levels;
+
+            words = words.map(item => {
+                const wordNames = item.word.split(',').map(w => w.trim());
+                const index = Math.min(
+                    ...wordNames.map(w => list10000.indexOf(w)).filter(i => i !== -1)
+                );
+                const levelIndex = (index === Infinity || index === -1) ? -1 : index;
+                return { ...item, levelIndex };
+            });
+
+            // Filter by level
+            if (selectedLevel) {
+                const allLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+                const index = allLevels.indexOf(selectedLevel);
+                const validLevels = allLevels.slice(0, index + 1);
+
+                words = words.filter(item => {
+                    const { levelIndex } = item;
+                    if (levelIndex === -1) return true; // If no level, include it
+
+                    let level;
+                    if (levelIndex < a1) level = 'A1';
+                    else if (levelIndex < a2) level = 'A2';
+                    else if (levelIndex < b1) level = 'B1';
+                    else if (levelIndex < b2) level = 'B2';
+                    else if (levelIndex < c1) level = 'C1';
+                    else level = 'C2';
+
+                    const found = validLevels.find(l => level === l);
+                    return !found; // If found, exclude it
+                });
+            }
+
+            return words;
         }
     },
 
@@ -80,7 +146,7 @@ export const store = new Vuex.Store({
             wordsHandler.add(word);
         },
 
-        doSort: function(state) {
+        doSort: function(_state) {
             wordsHandler.sort();
         },
 

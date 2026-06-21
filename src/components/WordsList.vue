@@ -30,7 +30,7 @@
             <tr v-for="word in words">
                 <td>{{ word.word }}</td>
                 <td>{{ word.count }}</td>
-                <td>{{ level(word.word) }}</td>
+                <td>{{ level(word) }}</td>
                 <td><button v-on:click="addKnown(word.word)" class="waves-effect waves-light btn">Known</button>
                     <!--button v-on:click="addAlias(word.word)">Alias</button--> </td>
             </tr>
@@ -52,32 +52,7 @@ export default {
     },
     computed: {
         words: function() {
-            let words;
-            if (this.suffix)
-                words = [...this.$store.getters.wordsJoinedEx];
-            else
-                words = [...this.$store.getters.wordsEx];
-
-            if (this.sortCount)
-                words.sort((a,b) => b.count - a.count)
-
-            if (this.selectedOption) {
-                const allLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
-                    
-                const index = allLevels.indexOf(this.selectedOption);
-                const validLevels = allLevels.slice(0, index + 1);
-
-                words = words.filter(word => {
-                    const level = this.level(word.word);
-                    if (level === '') return true; // If no level, include it
-
-                    const found = validLevels
-                        .find(l => level.startsWith(l));
-                    return !found; // If found, exclude it
-                });
-            }
-
-            return words;
+            return this.$store.getters.getFilteredWords(this.suffix, this.sortCount, this.selectedOption);
         },
         counts: function() {
             return this.$store.state.counts;
@@ -87,32 +62,21 @@ export default {
         addKnown: function(word) {
             this.$store.commit('addKnown', word);
         },
-        level: function(word) {
-            const words = word.split(',').map(w => w.trim());
+        level: function(wordObj) {
+            const { levelIndex } = wordObj;
 
-            const list10000 = this.$store.state.list10000 || [];
-            if (list10000.length === 0) {
+            if (levelIndex === -1) {
                 return '';
             }
 
-            const index = Math.min(
-                ...words.map(w => list10000.indexOf(w)).filter(i => i !== -1)
-            );
-
-            if (index === Infinity || index === -1) {
-                return '';
-            }
-
-            // CEFR rank boundaries from static/levels.json (Oxford 3000/5000 merge),
-            // fetched into the store at runtime. Anything past c1 is C2.
             const { a1, a2, b1, b2, c1 } = this.$store.state.levels;
 
-            const pos = ' (' + (index + 1) + ')';
-            if (index < a1) return 'A1' + pos;
-            else if (index < a2) return 'A2' + pos;
-            else if (index < b1) return 'B1' + pos;
-            else if (index < b2) return 'B2' + pos;
-            else if (index < c1) return 'C1' + pos;
+            const pos = ' (' + (levelIndex + 1) + ')';
+            if (levelIndex < a1) return 'A1' + pos;
+            else if (levelIndex < a2) return 'A2' + pos;
+            else if (levelIndex < b1) return 'B1' + pos;
+            else if (levelIndex < b2) return 'B2' + pos;
+            else if (levelIndex < c1) return 'C1' + pos;
             else return 'C2' + pos;
         }
     },
