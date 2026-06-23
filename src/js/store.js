@@ -17,6 +17,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {WordsHandler, wordsEx, groupWordsByBase} from '../../lib/words';
+import LEVELS_ANCHORS from '../levels.json';
 
 Vue.use(Vuex);
 
@@ -37,16 +38,15 @@ const getList10000 = async () => {
     }
 }
 
-// CEFR rank boundaries { a1, a2, b1, b2, c1 } — 0-based index cut-offs into 10000.txt
-const DEFAULT_LEVELS = { a1: 972, a2: 1765, b1: 2457, b2: 4653, c1: 7103 };
-const getLevels = async () => {
-    const res = await fetch('static/levels.json');
-    if (res.ok) {
-        return await res.json();
-    } else {
-        console.warn('Failed to load levels.json');
-        return DEFAULT_LEVELS;
+// CEFR rank boundaries { a1, a2, b1, b2, c1 } — anchor words (first word of each level) in 10000.txt
+const getLevels = (list10000) => {
+    const anchors = LEVELS_ANCHORS;
+    // Convert anchor words to indices for fast lookups
+    const levelIndices = {};
+    for (const key of ['a1', 'a2', 'b1', 'b2', 'c1']) {
+        levelIndices[key] = list10000.indexOf(anchors[key]);
     }
+    return levelIndices;
 }
 
 export const store = new Vuex.Store({
@@ -54,7 +54,7 @@ export const store = new Vuex.Store({
         words: WORDS, // [word1, word2] - founded words
         counts: COUNTS, // word: count
         list10000: [], // list of 10000 most popular words
-        levels: DEFAULT_LEVELS, // CEFR rank boundaries { a1, a2, b1, b2, c1 }, fetched from static/levels.json
+        levels: {}, // CEFR rank boundaries { a1, a2, b1, b2, c1 }, computed from levels.json
         original: [],
         knowns: []
     },
@@ -218,7 +218,8 @@ export const store = new Vuex.Store({
     actions: {
         parseText: async function(context, text) {
             if (context.state.list10000.length === 0) {
-                const [list, levels] = await Promise.all([getList10000(), getLevels()]);
+                const list = await getList10000();
+                const levels = getLevels(list);
                 context.commit('setList10000', list);
                 context.commit('setLevels', levels);
             }

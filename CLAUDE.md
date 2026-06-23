@@ -36,7 +36,9 @@ This is a vocabulary-analysis tool, **Browser SPA** application with additional 
 ### The 10000-word frequency list drives CEFR levels
 `public/static/10000.txt` is the reference list of the 10,000 most common English words, ordered by frequency. A word's CEFR level (A1–C2) is derived purely from its **rank/index in this list** (see `level()` in `src/components/WordsList.vue` and the `etalon` "absolute index" in the CLI).
 
-The boundary constants live in `public/static/levels.json` (`{ a1, a2, b1, b2, c1 }`, fetched at runtime into the Vuex store alongside `10000.txt`; `store.js` keeps a `DEFAULT_LEVELS` fallback). These are **0-based index cut-offs into `10000.txt`**: `level()` classifies a word by its `list10000.indexOf(word)` — `index < a1` → A1, `< a2` → A2, … `< c1` → C1, otherwise C2. So `levels.json` and `10000.txt` are tightly coupled: **any insert/delete in `10000.txt` shifts every rank after it and invalidates the boundaries.** Never hand-edit these files. Always use the `manage-words` skill (or `/manage-words` in Grok). It edits the list and automatically keeps the level boundaries in sync.
+The boundary constants live in `src/levels.json` (`{ a1, a2, b1, b2, c1 }`, imported by `store.js` and `manage-words.js`). These are **anchor words** (e.g., `a1: "general"`), not numeric indices. The store converts them to indices dynamically using `getLevels(list10000)` for fast lookups. The `level()` function classifies words using `index < a1_idx` → A1, `< a2_idx` → A2, … `< c1_idx` → C1, otherwise C2. This decouples levels from hard-coded indices: `manage-words.js` tracks anchor words through list modifications, so adding or removing any word preserves all level classifications.
+
+Never hand-edit these files. Always use the `manage-words` tool (or `node lib/manage-words.js`). It edits the list and automatically keeps the level anchors in sync.
 
 The skill supports these commands (run from the project root):
 
@@ -69,6 +71,10 @@ Single source of truth for the SPA. Holds `words`/`counts` (backed by the shared
 - **Language**: All code comments, documentation files (including `CLAUDE.md`, `README.md`, `SKILL.md`, and any other `.md` files), and commit messages must be written in English.
 
 - **Persistent rules (Agent Rules)**: When the user asks you to *always* do something, always remember/understand something, or follow a specific behavior going forward (phrases like "always...", "from now on...", "remember that...", "make sure you always..."), proactively add the instruction to this file (CLAUDE.md). This document serves as the persistent agent rules for the project.
+
+- **Never auto-commit**: Do not create git commits or suggest committing without explicit user instruction. Report what changed and stop — only commit if the user explicitly requests it (says "commit", "save this", etc.).
+
+- **Refactor separately from functionality changes**: Always do refactoring (renaming, interface changes, restructuring) as a distinct, isolated step — either before or after the functional change, never mixed together. Refactoring without functional changes must be a separate commit. This keeps commits focused and makes it easier to revert if needed. Especially important for function renames and interface changes.
 
 - **Scratch files go in `.cache/`.** Any throwaway/one-off script, temp data dump, or working file you create while doing a task belongs in `.cache/` (gitignored) — not in `scripts/`, `lib/`, or the repo root. Only commit a script under `lib/` when it's a deliberate, reusable tool (e.g. `lib/manage-words.js`). This keeps one-off helpers out of version control.
 - ESLint config (`.eslintrc.js`) extends `eslint:recommended` + `plugin:vue/essential` (parser `vue-eslint-parser`); linting is a standalone `npm run lint`, not part of the build.
